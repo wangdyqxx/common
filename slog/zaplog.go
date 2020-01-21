@@ -139,7 +139,7 @@ func formatFromContext(ctx context.Context, includeHead bool, format string, isC
 		if isCaller {
 			_, file, line, ok := runtime.Caller(2)
 			if ok {
-				cs = fmt.Sprintf("%s %s", cs, fmt.Sprint(file, line))
+				cs = fmt.Sprintf("%s %s:%d", cs, file, line)
 			}
 		}
 		return fmt.Sprintf("%s %s", cs, format)
