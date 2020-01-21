@@ -9,7 +9,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/uber/jaeger-client-go"
 
-	"util/scontext"
+	"github.com/wangdyqxx/util/scontext"
 )
 
 var (
