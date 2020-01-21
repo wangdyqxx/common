@@ -1,4 +1,4 @@
-module util
+module github.com/wangdyqxx/util
 
 replace go.uber.org/zap => github.com/uber-go/zap v1.13.0
 
