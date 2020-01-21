@@ -9,7 +9,7 @@ require (
 	github.com/uber/jaeger-client-go v2.22.1+incompatible
 	github.com/uber/jaeger-lib v2.2.0+incompatible // indirect
 	go.uber.org/atomic v1.5.1 // indirect
-	go.uber.org/zap v0.0.0-00010101000000-000000000000
+	go.uber.org/zap v1.9.1
 )
 
 go 1.13
