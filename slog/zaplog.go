@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"runtime"
+
 	//"github.com/shawnfeng/sutil/stime"
 	"github.com/natefinch/lumberjack"
 	"io"
@@ -40,18 +42,12 @@ var (
 	sLog  *zap.SugaredLogger
 )
 
-func TimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
-	enc.AppendString(t.Format("2006/01/02 15:04:05.000000"))
+func init() {
+	Init("", "TRACE")
+	atomic.StoreInt64(&cnStamp, time.Now().Unix())
 }
 
-func CapitalLevelEncoder(l zapcore.Level, enc zapcore.PrimitiveArrayEncoder) {
-	enc.AppendString(l.CapitalString())
-}
-
-func Sync() {
-	sLog.Sync()
-}
-
+//初始化
 func Init(logdir string, level string) {
 	InitV2(logdir, level, 10240000, 0, 0)
 }
@@ -115,21 +111,17 @@ func InitV2(logDir, level string, maxSize int, maxAge, maxBackups int) {
 	sLog = logger.Sugar()
 }
 
-func init() {
-	Init("", "TRACE")
-	atomic.StoreInt64(&cnStamp, time.Now().Unix())
+func TimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
+	enc.AppendString(t.Format("2006/01/02 15:04:05.000000"))
 }
 
-//type SLogger struct {
-//}
-//
-//func GetLogger() *SLogger {
-//	return &SLogger{}
-//}
-//
-//func (m *SLogger) Printf(format string, items ...interface{}) {
-//	Errorf(format, items...)
-//}
+func CapitalLevelEncoder(l zapcore.Level, enc zapcore.PrimitiveArrayEncoder) {
+	enc.AppendString(l.CapitalString())
+}
+
+func Sync() {
+	sLog.Sync()
+}
 
 func NewLogger(filename string, maxSize, maxAge, maxBackups int, localTime, compress bool) *lumberjack.Logger {
 	return &lumberjack.Logger{
@@ -142,11 +134,15 @@ func NewLogger(filename string, maxSize, maxAge, maxBackups int, localTime, comp
 	}
 }
 
-//todo 调用写入日志
-
-func formatFromContext(ctx context.Context, includeHead bool, format string) string {
+func formatFromContext(ctx context.Context, includeHead bool, format string, isCaller bool) string {
 	if cs := extractContextAsString(ctx, includeHead); cs != "" {
-		return fmt.Sprintf("%s%s", cs, format)
+		if isCaller {
+			_, file, line, ok := runtime.Caller(2)
+			if ok {
+				cs = fmt.Sprintf("%s %s", cs, fmt.Sprint(file, line))
+			}
+		}
+		return fmt.Sprintf("%s %s", cs, format)
 	}
 	return format
 }
@@ -158,8 +154,10 @@ func vFromContext(ctx context.Context, includeHead bool, v ...interface{}) []int
 	return v
 }
 
+//todo 可调用的写入日志函数
+
 func Tracef(ctx context.Context, format string, v ...interface{}) {
-	format = formatFromContext(ctx, false, format)
+	format = formatFromContext(ctx, false, format, false)
 	sLog.Debugf(format, v...)
 	atomic.AddInt64(&cnTrace, 1)
 }
@@ -171,7 +169,7 @@ func Traceln(ctx context.Context, v ...interface{}) {
 }
 
 func Debugf(ctx context.Context, format string, v ...interface{}) {
-	format = formatFromContext(ctx, false, format)
+	format = formatFromContext(ctx, false, format, false)
 	sLog.Debugf(format, v...)
 	atomic.AddInt64(&cnDebug, 1)
 }
@@ -183,7 +181,7 @@ func Debugln(ctx context.Context, v ...interface{}) {
 }
 
 func Infof(ctx context.Context, format string, v ...interface{}) {
-	format = formatFromContext(ctx, false, format)
+	format = formatFromContext(ctx, false, format, false)
 	sLog.Infof(format, v...)
 	atomic.AddInt64(&cnInfo, 1)
 }
@@ -195,7 +193,7 @@ func Infoln(ctx context.Context, v ...interface{}) {
 }
 
 func Warnf(ctx context.Context, format string, v ...interface{}) {
-	format = formatFromContext(ctx, false, format)
+	format = formatFromContext(ctx, false, format, false)
 	sLog.Warnf(format, v...)
 	atomic.AddInt64(&cnWarn, 1)
 }
@@ -207,37 +205,19 @@ func Warnln(ctx context.Context, v ...interface{}) {
 }
 
 func Errorf(ctx context.Context, format string, v ...interface{}) {
-	format = formatFromContext(ctx, true, format)
+	format = formatFromContext(ctx, true, format, true)
 	sLog.Errorf(format, v...)
 	atomic.AddInt64(&cnError, 1)
 }
 
-func Errorln(ctx context.Context, v ...interface{}) {
-	v = vFromContext(ctx, true, v...)
-	sLog.Error(v...)
-	atomic.AddInt64(&cnError, 1)
-}
-
 func Fatalf(ctx context.Context, format string, v ...interface{}) {
-	format = formatFromContext(ctx, true, format)
+	format = formatFromContext(ctx, true, format, true)
 	sLog.Fatalf(format, v...)
 	atomic.AddInt64(&cnFatal, 1)
 }
 
-func Fatalln(ctx context.Context, v ...interface{}) {
-	v = vFromContext(ctx, true, v...)
-	sLog.Fatal(v...)
-	atomic.AddInt64(&cnFatal, 1)
-}
-
 func Panicf(ctx context.Context, format string, v ...interface{}) {
-	format = formatFromContext(ctx, true, format)
+	format = formatFromContext(ctx, true, format, true)
 	sLog.Panicf(format, v...)
-	atomic.AddInt64(&cnPanic, 1)
-}
-
-func Panicln(ctx context.Context, v ...interface{}) {
-	v = vFromContext(ctx, true, v...)
-	sLog.Panic(v...)
 	atomic.AddInt64(&cnPanic, 1)
 }

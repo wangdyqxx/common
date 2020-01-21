@@ -16,4 +16,5 @@ func Test_Infof(t *testing.T) {
 	slog.Init(dir, "INFO")
 	defer slog.Sync()
 	slog.Infof(context.TODO(),"%s", "a test log")
+	slog.Errorf(context.TODO(),"%s", "a test log")
 }

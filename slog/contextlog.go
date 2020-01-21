@@ -101,5 +101,5 @@ func extractContextAsString(ctx context.Context, fullHead bool) (s string) {
 	for _, kv := range extractContext(ctx, fullHead) {
 		parts = append(parts, fmt.Sprint(kv))
 	}
-	return strings.Join(parts, "\t") + "\t"
+	return strings.Join(parts, "  ")
 }

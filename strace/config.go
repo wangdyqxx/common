@@ -25,7 +25,7 @@ const (
 	JAEGER_DEBUG_HEADER         = "trace-debug-id"
 	JAEGER_BAGGAGE_HEADER       = "trace-baggage"
 	TRACE_CONTEXT_HEADER_NAME   = "banyu-trace-id"
-	TRACE_BAGGAGE_HEADER_PREFIX = "banyuctx-"
+	TRACE_BAGGAGE_HEADER_PREFIX = "dyctx-"
 )
 
 var defaultConfigurator = NewSimpleConfigurator()
