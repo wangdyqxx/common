@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"os"
 	"runtime"
 
 	//"github.com/shawnfeng/sutil/stime"
 	"github.com/natefinch/lumberjack"
 	"io"
-	"os"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -39,7 +39,7 @@ var (
 	// log count stat stamp
 	cnStamp   int64
 	slogMutex sync.Mutex
-	sLog  *zap.SugaredLogger
+	sLog      *zap.SugaredLogger
 )
 
 func init() {
@@ -73,12 +73,11 @@ func InitV2(logDir, level string, maxSize int, maxAge, maxBackups int) {
 	}
 
 	logInfoFile := ""
-	if logDir != "" {
-		logInfoFile = logDir + "/ser.log"
-	}
-
 	var out io.Writer
-	if len(logDir) > 0 {
+	if logDir == "" {
+		out = os.Stdout
+	} else {
+		logInfoFile = logDir + "/ser.log"
 		lumberjackLogger := NewLogger(logInfoFile, maxSize, maxAge, maxBackups, true, false)
 		go func() {
 			for {
@@ -91,8 +90,6 @@ func InitV2(logDir, level string, maxSize int, maxAge, maxBackups int) {
 			}
 		}()
 		out = lumberjackLogger
-	} else {
-		out = os.Stdout
 	}
 	w := zapcore.AddSync(out)
 
