@@ -17,7 +17,8 @@ func init() {
 
 //添加运行服务需要实现的接口
 type PluginServer interface {
-	InitConfig(context.Context, *sconfig.StaticFileConfig) (PluginServer, error)
+	InitConfig(context.Context, *sconfig.YamlConfig) (PluginServer, error)
 	Close(context.Context)
 }
+
 
