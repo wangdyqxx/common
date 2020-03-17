@@ -183,9 +183,9 @@ func Infof(ctx context.Context, format string, v ...interface{}) {
 	atomic.AddInt64(&cnInfo, 1)
 }
 
-func Info(format string, v ...interface{}) {
-	format = formatFromContext(context.TODO(),false, format, false)
-	sLog.Infof(format, v...)
+func Info(v ...interface{}) {
+	v = vFromContext(context.TODO(), false, v...)
+	sLog.Info(v...)
 	atomic.AddInt64(&cnInfo, 1)
 }
 
