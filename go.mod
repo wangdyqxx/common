@@ -3,6 +3,7 @@ module github.com/wangdyqxx/util
 replace go.uber.org/zap => github.com/uber-go/zap v1.13.0
 
 require (
+	github.com/gin-gonic/gin v1.6.1
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/opentracing/opentracing-go v1.1.0
 	github.com/pkg/errors v0.8.1
