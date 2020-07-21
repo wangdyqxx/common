@@ -1,4 +1,4 @@
-package slog
+package log
 
 import (
 	"context"
@@ -8,13 +8,12 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/uber/jaeger-client-go"
-
-	"github.com/wangdyqxx/util/scontext"
+	"github.com/wangdyqxx/common/tracer"
 )
 
 var (
-	emptyTrace = contextKV{scontext.ContextKeyTraceID: jaeger.TraceID{0, 0}}
-	emptyHead  = contextKV{scontext.ContextKeyHeadUid: int64(0)}
+	emptyTrace = contextKV{tracer.ContextKeyTraceID: jaeger.TraceID{High: 0, Low: 0}}
+	emptyHead  = contextKV{tracer.ContextKeyHeadUid: int64(0)}
 )
 
 var errorTraceIDNotFound = errors.New("traceID not found")
@@ -27,12 +26,12 @@ func newContextKV() contextKV {
 }
 
 func (ckv contextKV) String() string {
-	if v, ok := ckv[scontext.ContextKeyTraceID]; ok {
+	if v, ok := ckv[tracer.ContextKeyTraceID]; ok {
 		return fmt.Sprintf("%v", v)
 	}
 
 	var parts []string
-	if v, ok := ckv[scontext.ContextKeyHeadUid]; ok {
+	if v, ok := ckv[tracer.ContextKeyHeadUid]; ok {
 		if uid, uok := v.(int64); uok {
 			parts = append(parts, fmt.Sprintf("%d", uid))
 		}
@@ -40,7 +39,7 @@ func (ckv contextKV) String() string {
 
 	var restParts []string
 	for k, v := range ckv {
-		if k != scontext.ContextKeyHeadUid && k != scontext.ContextKeyTraceID {
+		if k != tracer.ContextKeyHeadUid && k != tracer.ContextKeyTraceID {
 			restParts = append(restParts, fmt.Sprintf("%s:%v", k, v))
 		}
 	}
@@ -57,7 +56,7 @@ func extractTraceID(ctx context.Context) (error, contextKV) {
 	span := opentracing.SpanFromContext(ctx)
 	if span != nil {
 		if sc, ok := span.Context().(jaeger.SpanContext); ok {
-			ckv[scontext.ContextKeyTraceID] = sc.TraceID()
+			ckv[tracer.ContextKeyTraceID] = sc.TraceID()
 			return nil, ckv
 		}
 	}
@@ -65,13 +64,13 @@ func extractTraceID(ctx context.Context) (error, contextKV) {
 }
 
 func extractHead(ctx context.Context, fullHead bool) (error, contextKV) {
-	head := ctx.Value(scontext.ContextKeyHead)
-	if chd, ok := head.(scontext.ContextHeader); ok {
+	head := ctx.Value(tracer.ContextKeyHead)
+	if chd, ok := head.(tracer.ContextHeader); ok {
 		kv := chd.ToKV()
 		if fullHead {
 			return nil, contextKV(chd.ToKV())
 		}
-		return nil, contextKV(map[string]interface{}{scontext.ContextKeyHeadUid: kv[scontext.ContextKeyHeadUid]})
+		return nil, contextKV(map[string]interface{}{tracer.ContextKeyHeadUid: kv[tracer.ContextKeyHeadUid]})
 	}
 	return errorHeadKVNotFound, nil
 }

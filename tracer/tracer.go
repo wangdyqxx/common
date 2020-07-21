@@ -1,4 +1,4 @@
-package strace
+package tracer
 
 import (
 	"fmt"

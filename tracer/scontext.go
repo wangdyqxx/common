@@ -1,4 +1,4 @@
-package scontext
+package tracer
 
 import (
 	"context"
@@ -107,4 +107,15 @@ func GetUnionId(ctx context.Context) (unionId string, ok bool) {
 		unionId, ok = val.(string)
 	}
 	return
+}
+
+
+type Head struct {
+	Ip         string `json:"ip"`
+	DeviceId   string `json:"did"`
+	Region     string `json:"region"`
+	DeviceType int32  `json:"dt"`
+	Source     int32  `json:"source"`
+	Uid        int64  `json:"uid"`
+	Token      string `json:"token"`
 }

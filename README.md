@@ -1,2 +1,2 @@
-# sutil
-go服务工具
+# common
+通用框架

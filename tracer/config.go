@@ -1,4 +1,4 @@
-package strace
+package tracer
 
 import (
 	"fmt"
@@ -41,7 +41,6 @@ type Configurator interface {
 }
 
 func NewConfigurator(configType int) (Configurator, error) {
-
 	switch configType {
 	case CONFIG_TYPE_SIMPLE:
 		return NewSimpleConfigurator(), nil

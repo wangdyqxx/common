@@ -1,4 +1,4 @@
-package sconfig
+package config
 
 
 type StaticFileConfig interface {
@@ -17,11 +17,6 @@ func (m *YamlConfig) GetServer() *ServerConfig {
 
 func (m *YamlConfig) GetCache() *RedisConfig {
 	return m.Redis
-}
-
-type ServerConfig struct {
-	Addr     string `yaml:"addr"`
-	FilePath string `yaml:"path"`
 }
 
 type RedisConfig struct {

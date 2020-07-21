@@ -1,4 +1,4 @@
-package slog
+package log
 
 import (
 	"context"
@@ -42,17 +42,13 @@ var (
 	sLog      *zap.SugaredLogger
 )
 
-func init() {
-	Init("", "TRACE")
-	atomic.StoreInt64(&cnStamp, time.Now().Unix())
-}
-
 //初始化
 func Init(logdir string, level string) {
-	InitV2(logdir, level, 10240000, 0, 0)
+	atomic.StoreInt64(&cnStamp, time.Now().Unix())
+	InitV1(logdir, level, 10240000, 0, 0)
 }
 
-func InitV2(logDir, level string, maxSize int, maxAge, maxBackups int) {
+func InitV1(logDir, level string, maxSize int, maxAge, maxBackups int) {
 	logLevel := zap.InfoLevel
 	if level == "TRACE" {
 		logLevel = zap.DebugLevel
