@@ -3,17 +3,16 @@ package log
 import (
 	"context"
 	"fmt"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
+	"io"
 	"os"
 	"runtime"
-
-	//"github.com/shawnfeng/sutil/stime"
-	"github.com/natefinch/lumberjack"
-	"io"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/natefinch/lumberjack"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 // log 级别

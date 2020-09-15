@@ -181,7 +181,7 @@ func (m *Server) AwaitSignal(ctx context.Context) {
 	//signal.Reset(signals...)
 	signal.Notify(c, signals...)
 	for s := range c {
-		log.Infof(ctx, "receive a signal:%s", s.String())
+		log.Infof(ctx, "receive a signal:%s", s.String(), s.Signal)
 		switch s {
 		case syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT:
 			fmt.Println("退出", s)
