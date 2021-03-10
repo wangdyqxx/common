@@ -1,9 +1,0 @@
-[base_config]
-server_id = "demo"
-server_name = "demo"
-server_group = "test"
-server_type = "http"
-[log_config]
-log_dir = ""
-log_level = "debug"
-stat_log_dir = "."

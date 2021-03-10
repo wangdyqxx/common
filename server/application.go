@@ -6,6 +6,7 @@ import (
 	"github.com/kataras/golog"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
+	"github.com/kataras/iris/v12/core/host"
 	"sync"
 	"time"
 )
@@ -94,4 +95,36 @@ func (m *Application) close(timeout int64) {
 		//通知组件服务即将关闭
 		m.WebApp.Shutdown(ctx)
 	})
+}
+
+func (m *Application) CreateRunner(addr string, configurators ...host.Configurator) iris.Runner {
+	return iris.Addr(addr, configurators...)
+}
+
+func (app *Application) Run(serve iris.Runner, irisConf iris.Configuration) {
+	app.addMiddlewares(irisConf)
+	app.installDB()
+	app.other.booting()
+	for index := 0; index < len(prepares); index++ {
+		prepares[index](app)
+	}
+
+	logLevel := "debug"
+	if level, ok := irisConf.Other["logger_level"]; ok {
+		logLevel = level.(string)
+	}
+	globalApp.IrisApp.Logger().SetLevel(logLevel)
+
+	repositoryAPIRun(irisConf)
+	for i := 0; i < len(starters); i++ {
+		starters[i](app)
+	}
+	app.msgsBus.building()
+	app.comPool.singleBooting(app)
+	shutdownSecond := int64(2)
+	if level, ok := irisConf.Other["shutdown_second"]; ok {
+		shutdownSecond = level.(int64)
+	}
+	app.shutdown(shutdownSecond)
+	app.IrisApp.Run(serve, iris.WithConfiguration(irisConf))
 }

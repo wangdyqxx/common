@@ -1,0 +1,31 @@
+rule "1" "1"
+begin
+	//println(req.Rid,res.At)
+	//res.At += 2
+	//println(res.At,joinEvent(res.At))
+	//res.At = room.GetAttention()
+	//println("rule 1...")
+	//conc {
+	//    a = 3
+	//    b = 4
+	//    c = a + b
+	//    d = "a+b="
+	//}
+	//name = @name
+	//desc = @desc
+	//println("名称：",name,"描述：",desc,"计算：",d,c)
+	//return res.At
+	//println(isNil(arr))
+	//println(len(arr))
+	//println(len(mm))
+	//println(inArr(arr, 2))
+	//println("inmap:",inMap(mm, 2, 12))
+	println("reTry:",reTry(1,1,inArr,room.AccountIds,2))
+end
+
+rule "2" "2rule"
+begin
+    println(@desc)
+    res.Num = room.GetNum()
+    println("rule 2...",res.Num)
+end

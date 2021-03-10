@@ -4,6 +4,7 @@ replace go.uber.org/zap => github.com/uber-go/zap v1.13.0
 
 require (
 	github.com/BurntSushi/toml v0.3.1
+	github.com/bilibili/gengine v1.5.1
 	github.com/bradfitz/gomemcache v0.0.0-20190913173617-a41fca850d0b // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.6.1
