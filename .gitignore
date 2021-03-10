@@ -18,3 +18,4 @@ example/example
 *.log
 *.idea/
 go.sum
+*example
